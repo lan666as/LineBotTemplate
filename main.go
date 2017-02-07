@@ -43,13 +43,13 @@ func getSimsimi(word string) string{
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-	type resp2 struct {
+	type Resp2 struct {
     	Response string `json:"response"`
     	Id  string `json:"id"`
     	Result    string `json:"result"`
     	Msg  string `json:"msg"`
 	}
-	resp2 = resp2{}
+	resp2 = Resp2{}
 	json.Unmarshal([]byte(body), &resp2)
 	return string(resp2.Response)
 }
