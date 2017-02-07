@@ -398,4 +398,5 @@ func (app *KitchenSink) saveContent(content io.ReadCloser) (*os.File, error) {
 		return nil, err
 	}
 	log.Printf("Saved %s", file.Name())
-return file, nil
+	return file, nil
+}
