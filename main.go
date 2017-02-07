@@ -273,13 +273,9 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 		}
 	default:
 		log.Printf("Echo message to %s: %s", replyToken, message.Text)
-		profile, err := app.bot.GetProfile(source.UserID).Do()
-		if err != nil {
-				return app.replyText(replyToken, err.Error())
-		}
 		if _, err := app.bot.ReplyMessage(
 			replyToken,
-			linebot.NewTextMessage(profile.DisplayName + ": " + message.Text),
+			linebot.NewTextMessage("Simsimi! " message.Text + " -> " + getSimsimi(string(message.Text))),
 		).Do(); err != nil {
 			return err
 		}
