@@ -16,6 +16,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net"
 	"net/url"
 	"os"
 	"io/ioutil"
@@ -42,7 +43,15 @@ func getSimsimi(word string) string{
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-	return string(body)
+	type resp2 struct {
+    	Response string `json:"response"`
+    	Id  string `json:"id"`
+    	Result    string `json:"result"`
+    	Msg  string `json:"msg"`
+	}
+	resp2 = resp2{}
+	json.Unmarshal([]byte(body), &resp2)
+	return string(resp2.Response[0])
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
