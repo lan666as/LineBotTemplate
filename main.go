@@ -40,7 +40,8 @@ func getSimsimi(word string) string{
 		log.Print(err)
 	}
 	defer resp.Body.Close()
-	return string(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	return string(body)
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
