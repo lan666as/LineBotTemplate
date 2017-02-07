@@ -275,7 +275,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 		log.Printf("Echo message to %s: %s", replyToken, message.Text)
 		if _, err := app.bot.ReplyMessage(
 			replyToken,
-			linebot.NewTextMessage("Simsimi! " + message.Text + " -> " getSimsimi(string(message.Text))),
+			linebot.NewTextMessage(message.ID+":"+message.Text+" -> " + getSimsimi(string(message.Text))),
 		).Do(); err != nil {
 			return err
 		}
