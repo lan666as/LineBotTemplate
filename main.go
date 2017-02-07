@@ -71,7 +71,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	for _, event := range events {
 		if event.Type == linebot.EventTypeMessage {
-			profile, err := app.bot.GetProfile(source.UserID).Do()
+			profile, err := bot.GetProfile(event.Source.UserID).Do()
 			if err != nil {
 				log.Print(err)
 			}
