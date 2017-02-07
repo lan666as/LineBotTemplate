@@ -37,7 +37,7 @@ func main() {
 }
 
 func getSimsimi(word string) string{
-	resp, err := http.Get("http://www.simsimi.com/getRealtimeReq?uuid=TZq4ZUZta6MhnHeGYMVBbhMZkNW0r6zgGQalwYMog6X&lc=id&ft=1&reqText=" + url.QueryEscape(word))
+	resp, err := http.Get("http://www.simsimi.com/getRealtimeReq?uuid=TZq4ZUZta6MhnHeGYMVBbhMZkNW0r6zgGQalwYMog6X&lc=id&ft=1&reqText=" + word)
 	if err != nil{
 		log.Print(err)
 	}
@@ -71,7 +71,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		if event.Type == linebot.EventTypeMessage {
 			switch message := event.Message.(type) {
 			case *linebot.TextMessage:
-				if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" -> "+getSimsimi(message.Text))).Do(); err != nil {
+				if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" -> " + getSimsimi(message.Text))).Do(); err != nil {
 					log.Print(err)
 				}
 			}
