@@ -71,9 +71,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	for _, event := range events {
 		if event.Type == linebot.EventTypeMessage {
+			profile, err := app.bot.GetProfile(source.UserID).Do()
+			if err != nil {
+				log.Print(err)
+			}
 			switch message := event.Message.(type) {
 			case *linebot.TextMessage:
-				if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" -> "+getSimsimi(message.Text))).Do(); err != nil {
+				if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(profile.DisplayName+": "+message.Text+" -> "+getSimsimi(message.Text))).Do(); err != nil {
 					log.Print(err)
 				}
 			}
