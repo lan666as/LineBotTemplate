@@ -37,22 +37,24 @@ func main() {
 }
 
 func getSimsimi(word string) string{
-	resp, err := http.Get("http://www.simsimi.com/getRealtimeReq?uuid=TZq4ZUZta6MhnHeGYMVBbhMZkNW0r6zgGQalwYMog6X&lc=id&ft=1&reqText=" + url.QueryEscape(word))
-	if err != nil {
+	resp, err := http.Get("http://sandbox.api.simsimi.com/request.p?key=1b4f97fa-a422-45f0-8faf-0122ddd2dc5c&lc=id&ft=1.0&text=" + url.QueryEscape(word))
+	if err != nil{
 		log.Print(err)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	type SimsimiResp struct {
-    	Status string `json:"status"`
-    	RespSentence  string `json:"respSentence"`
+    	Response string `json:"response"`
+    	Id  string `json:"id"`
+    	Result    string `json:"result"`
+    	Msg  string `json:"msg"`
 	}
 	var resp2 = new(SimsimiResp)
 	err = json.Unmarshal([]byte(body), &resp2)
 	if err != nil{
 		log.Print(err)
 	}
-	return string(resp2.RespSentence)
+	return string(resp2.Response)
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
@@ -69,13 +71,9 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	for _, event := range events {
 		if event.Type == linebot.EventTypeMessage {
-			profile, err2 := bot.GetProfile(event.Source.UserID).Do()
-			if err2 != nil{
-				log.Print(err2)
-			}
 			switch message := event.Message.(type) {
 			case *linebot.TextMessage:
-				if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(profile.DisplayName+": "+message.Text+" -> "+getSimsimi(message.Text))).Do(); err != nil {
+				if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" -> "+getSimsimi(message.Text))).Do(); err != nil {
 					log.Print(err)
 				}
 			}
