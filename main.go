@@ -37,7 +37,7 @@ func main() {
 }
 
 func getSimsimi(word string) string{
-	resp, err := http.Get("http://sandbox.api.simsimi.com/request.p?key=1b4f97fa-a422-45f0-8faf-0122ddd2dc5c&lc=id&ft=1.0&text=" + url.QueryEscape(word))
+	resp, err := http.Get("http://www.simsimi.com/getRealtimeReq?uuid=TZq4ZUZta6MhnHeGYMVBbhMZkNW0r6zgGQalwYMog6X&lc=id&ft=1&reqText=" + url.QueryEscape(word))
 	if err != nil{
 		log.Print(err)
 	}
