@@ -44,10 +44,8 @@ func getSimsimi(word string) string{
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	type SimsimiResp struct {
-    	Response string `json:"response"`
-    	Id  string `json:"id"`
-    	Result    string `json:"result"`
-    	Msg  string `json:"msg"`
+    	Response string `json:"respSentence"`
+    	Status  string `json:"status"`
 	}
 	var resp2 = new(SimsimiResp)
 	err = json.Unmarshal([]byte(body), &resp2)
