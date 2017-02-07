@@ -17,6 +17,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"io/ioutil"
 
 	"github.com/line/line-bot-sdk-go/linebot"
 )
@@ -33,14 +34,13 @@ func main() {
 	http.ListenAndServe(addr, nil)
 }
 
-func getSimsimi(word string){
+func getSimsimi(word string) string{
 	resp, err := http.Get("http://sandbox.api.simsimi.com/request.p?key=1b4f97fa-a422-45f0-8faf-0122ddd2dc5c&lc=id&ft=1.0&text=" + word)
 	if err != nil{
 		log.Print(err)
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	return string(body)
+	return string(resp.Body)
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
