@@ -16,10 +16,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net"
 	"net/url"
 	"os"
 	"io/ioutil"
+	"encoding/json"
 
 	"github.com/line/line-bot-sdk-go/linebot"
 )
@@ -51,7 +51,7 @@ func getSimsimi(word string) string{
 	}
 	resp2 = resp2{}
 	json.Unmarshal([]byte(body), &resp2)
-	return string(resp2.Response[0])
+	return string(resp2.Response)
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
