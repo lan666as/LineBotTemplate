@@ -38,19 +38,22 @@ func main() {
 
 func getSimsimi(word string) string{
 	resp, err := http.Get("http://sandbox.api.simsimi.com/request.p?key=1b4f97fa-a422-45f0-8faf-0122ddd2dc5c&lc=id&ft=1.0&text=" + url.QueryEscape(word))
-	if err != nil{
+	if err != nil {
 		log.Print(err)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-	type Resp2 struct {
+	type SimsimiResp struct {
     	Response string `json:"response"`
     	Id  string `json:"id"`
     	Result    string `json:"result"`
     	Msg  string `json:"msg"`
 	}
-	resp2 = Resp2{}
-	json.Unmarshal([]byte(body), &resp2)
+	var resp2 = new(SimsimiResp)
+	err = json.Unmarshal([]byte(body), &resp2)
+	if err != nil{
+		log.Print(err)
+	}
 	return string(resp2.Response)
 }
 
