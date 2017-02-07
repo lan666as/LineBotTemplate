@@ -52,7 +52,7 @@ func getSimsimi(word string) string{
 	if err != nil{
 		log.Print(err)
 	}
-	return string(resp2.RespSentence)
+	return string(body)
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
@@ -71,7 +71,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		if event.Type == linebot.EventTypeMessage {
 			switch message := event.Message.(type) {
 			case *linebot.TextMessage:
-				if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" -> " + getSimsimi(message.Text))).Do(); err != nil {
+				if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.ID+":"+message.Text+" -> " + getSimsimi(string(message.Text))).Do(); err != nil {
 					log.Print(err)
 				}
 			}
