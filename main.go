@@ -44,15 +44,15 @@ func getSimsimi(word string) string{
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	type SimsimiResp struct {
-    	Response string `json:"respSentence"`
-    	Status  string `json:"status"`
+    	Status string `json:"status"`
+    	RespSentence  string `json:"respSentence"`
 	}
 	var resp2 = new(SimsimiResp)
 	err = json.Unmarshal([]byte(body), &resp2)
 	if err != nil{
 		log.Print(err)
 	}
-	return string(resp2.Response)
+	return string(resp2.RespSentence)
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
