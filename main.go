@@ -227,8 +227,8 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 		imageURL := app.appBaseURL + "/static/buttons/1040.jpg"
 		template := linebot.NewButtonsTemplate(
 			imageURL, "My button sample", "Hello, my button",
-			//linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
-			//linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", ""),
+			linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
+			linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", ""),
 			linebot.NewPostbackTemplateAction("Tombol perbanyak teman", "hello こんにちは", "Aku suka Hafiz lho!"),
 			linebot.NewMessageTemplateAction("Tombol perbanyak like", "Aku suka Hafiz lho!"),
 		)
