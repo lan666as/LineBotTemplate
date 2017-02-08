@@ -103,7 +103,40 @@ func GetSimsimi(word string) string{
 	}
 	return string(resp2.RespSentence)
 }
-//func GetIndico()
+func GetIndico(imgUrl string) string{
+	 client := &http.Client{}
+	 req, err := http.NewRequest("POST", "https://apiv2.indico.io/imagerecognition", nil)
+
+	 if err != nil {
+	 	fmt.Println(err)
+	 	return
+	 }
+
+	 req.Header.Add("X-ApiKey", "de5ec059652890635e7657540441e22e")
+	 resp, err := client.Do(req)
+	 defer resp.Body.Close()
+
+	url := "https://apiv2.indico.io/imagerecognition"
+    log.Print("URL:>", url)
+
+    var jsonStr = []byte(`{"data":"`+ imgUrl +`"}`)
+    req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+    req.Header.Set("X-ApiKey", "de5ec059652890635e7657540441e22e")
+    //req.Header.Set("Content-Type", "application/json")
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        panic(err)
+    }
+    defer resp.Body.Close()
+
+    log.Print("response Status:", resp.Status)
+    log.Print("response Headers:", resp.Header)
+    body, _ := ioutil.ReadAll(resp.Body)
+    log.Print("response Body:", string(body))
+    return string(body)
+}
 // Callback function for http server
 func (app *KitchenSink) Callback(w http.ResponseWriter, r *http.Request) {
 	events, err := app.bot.ParseRequest(r)
@@ -125,7 +158,7 @@ func (app *KitchenSink) Callback(w http.ResponseWriter, r *http.Request) {
 					log.Print(err)
 				}
 			case *linebot.ImageMessage:
-				if err := app.handleImage(message, event.ReplyToken); err != nil {
+				if err := app.handleImage(message, event.ReplyToken, event.Source); err != nil {
 					log.Print(err)
 				}
 			case *linebot.VideoMessage:
@@ -284,7 +317,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 	return nil
 }
 
-func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken string) error {
+func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken string, source *linebot.EventSource) error {
 	return app.handleHeavyContent(message.ID, func(originalContent *os.File) error {
 		// You need to install ImageMagick.
 		// And you should consider about security and scalability.
@@ -296,11 +329,22 @@ func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken st
 
 		originalContentURL := app.appBaseURL + "/downloaded/" + filepath.Base(originalContent.Name())
 		previewImageURL := app.appBaseURL + "/downloaded/" + filepath.Base(previewImagePath)
-		if _, err := app.bot.ReplyMessage(
-			replyToken,
-			linebot.NewImageMessage(originalContentURL, previewImageURL),
-		).Do(); err != nil {
-			return err
+		if(source.UserID == "U54182c7c0ee792ac90a24f95282dd048" && source.Type == linebot.EventSourceTypeUser){
+			if _, err := app.bot.ReplyMessage(
+				replyToken,
+				linebot.NewImageMessage(originalContentURL, previewImageURL),
+				linebot.NewTextMessage("Analisis: " + GetIndico(string(originalContentURL))),
+			).Do(); err != nil {
+				return err
+			}
+		}
+		else{
+			if _, err := app.bot.ReplyMessage(
+				replyToken,
+				linebot.NewImageMessage(originalContentURL, previewImageURL),
+			).Do(); err != nil {
+				return err
+			}
 		}
 		return nil
 	})
