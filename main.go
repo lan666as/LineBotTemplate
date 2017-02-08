@@ -24,6 +24,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"encoding/json"
+	"bytes"
 
 	"github.com/line/line-bot-sdk-go/linebot"
 )
