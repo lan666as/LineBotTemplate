@@ -25,6 +25,7 @@ import (
 	"path/filepath"
 	"encoding/json"
 	"bytes"
+	b64 "encoding/base64"
 
 	"github.com/line/line-bot-sdk-go/linebot"
 )
@@ -104,11 +105,16 @@ func GetSimsimi(word string) string{
 	}
 	return string(resp2.RespSentence)
 }
-func GetIndico(imgUrl string) string{
+func GetIndico(messageID string, imgUrl string) string{
+	content, err := app.bot.GetMessageContent(messageID).Do()
+	if err != nil {
+		return err
+	}
+	contentEnc := base64.StdEncoding.EncodeToString([]byte(content))
 	url := "https://apiv2.indico.io/imagerecognition"
     log.Print("URL:>", url)
 
-    var jsonStr = []byte(`{"data":"`+ imgUrl +`"}`)
+    var jsonStr = []byte(`{"data":"`+ contentEnc  +`"}`)
     req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
     req.Header.Set("X-ApiKey", "de5ec059652890635e7657540441e22e")
     //req.Header.Set("Content-Type", "application/json")
@@ -322,7 +328,7 @@ func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken st
 			if _, err := app.bot.ReplyMessage(
 				replyToken,
 				linebot.NewImageMessage(originalContentURL, previewImageURL),
-				//linebot.NewTextMessage("Analisis: " + GetIndico(string(originalContentURL))),
+				linebot.NewTextMessage("Analisis: " + GetIndico(string(originalContentURL))),
 				linebot.NewTextMessage(originalContentURL),
 			).Do(); err != nil {
 				return err
