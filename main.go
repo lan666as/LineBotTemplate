@@ -108,7 +108,7 @@ func GetSimsimi(word string) string{
 func (app *KitchenSink) GetIndico(messageID string, imgUrl string) string{
 	content, err := app.bot.GetMessageContent(messageID).Do()
 	if err != nil {
-		return string(err)
+		log.Print(err)
 	}
 	defer content.Content.Close()
 	buf := new(bytes.Buffer)
