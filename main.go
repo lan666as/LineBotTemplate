@@ -103,7 +103,7 @@ func GetSimsimi(word string) string{
 	}
 	return string(resp2.RespSentence)
 }
-func GetIndico()
+//func GetIndico()
 // Callback function for http server
 func (app *KitchenSink) Callback(w http.ResponseWriter, r *http.Request) {
 	events, err := app.bot.ParseRequest(r)
