@@ -104,18 +104,6 @@ func GetSimsimi(word string) string{
 	return string(resp2.RespSentence)
 }
 func GetIndico(imgUrl string) string{
-	 client := &http.Client{}
-	 req, err := http.NewRequest("POST", "https://apiv2.indico.io/imagerecognition", nil)
-
-	 if err != nil {
-	 	fmt.Println(err)
-	 	return
-	 }
-
-	 req.Header.Add("X-ApiKey", "de5ec059652890635e7657540441e22e")
-	 resp, err := client.Do(req)
-	 defer resp.Body.Close()
-
 	url := "https://apiv2.indico.io/imagerecognition"
     log.Print("URL:>", url)
 
