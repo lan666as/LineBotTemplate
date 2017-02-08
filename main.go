@@ -108,10 +108,13 @@ func GetSimsimi(word string) string{
 func (app *KitchenSink) GetIndico(messageID string, imgUrl string) string{
 	content, err := app.bot.GetMessageContent(messageID).Do()
 	if err != nil {
-		return err
+		return string(err)
 	}
 	defer content.Content.Close()
-	contentEnc := b64.StdEncoding.EncodeToString([]byte(content.Content))
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(content.Content)
+	s := buf.String()
+	contentEnc := b64.StdEncoding.EncodeToString([]byte(s))
 	url := "https://apiv2.indico.io/imagerecognition"
     log.Print("URL:>", url)
 
