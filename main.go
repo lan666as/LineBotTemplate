@@ -118,7 +118,7 @@ func (app *KitchenSink) GetIndico(messageID string, imgUrl string) string{
 	url := "https://apiv2.indico.io/imagerecognition"
     log.Print("URL:>", url)
 
-    var jsonStr = []byte(`{"data":"`+ contentEnc  +`", "[top_n]" : "15", "[hq]" : "True"}`)
+    var jsonStr = []byte(`{"data":"`+ contentEnc  +`", "top_n" : "15", "hq" : "True"}`)
     req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
     req.Header.Set("X-ApiKey", "de5ec059652890635e7657540441e22e")
     //req.Header.Set("Content-Type", "application/json")
