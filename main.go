@@ -19,6 +19,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -85,7 +86,7 @@ func NewKitchenSink(channelSecret, channelToken, appBaseURL string) (*KitchenSin
 }
 
 func getSimsimi(word string) string{
-	resp, err := http.Get("http://www.simsimi.com/getRealtimeReq?uuid=TZq4ZUZta6MhnHeGYMVBbhMZkNW0r6zgGQalwYMog6X&lc=id&ft=1&reqText=" + word)
+	resp, err := http.Get("http://www.simsimi.com/getRealtimeReq?uuid=TZq4ZUZta6MhnHeGYMVBbhMZkNW0r6zgGQalwYMog6X&lc=id&ft=1&reqText=" + url.QueryEscape(word))
 	if err != nil{
 		log.Print(err)
 	}
@@ -100,7 +101,7 @@ func getSimsimi(word string) string{
 	if err != nil{
 		log.Print(err)
 	}
-	return string(body)
+	return string(resp2.RespSentence)
 }
 
 // Callback function for http server
