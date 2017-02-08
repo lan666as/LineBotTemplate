@@ -93,7 +93,7 @@ func getSimsimi(word string) string{
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	type SimsimiResp struct {
-    	Status string `json:"status"`
+    	Status json.Number `json:"status"`
     	RespSentence  string `json:"respSentence"`
 	}
 	var resp2 = new(SimsimiResp)
