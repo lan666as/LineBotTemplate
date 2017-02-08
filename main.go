@@ -322,7 +322,8 @@ func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken st
 			if _, err := app.bot.ReplyMessage(
 				replyToken,
 				linebot.NewImageMessage(originalContentURL, previewImageURL),
-				linebot.NewTextMessage("Analisis: " + GetIndico(string(originalContentURL))),
+				//linebot.NewTextMessage("Analisis: " + GetIndico(string(originalContentURL))),
+				linebot.NewTextMessage(originalContentURL),
 			).Do(); err != nil {
 				return err
 			}
