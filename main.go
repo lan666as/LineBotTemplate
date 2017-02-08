@@ -325,8 +325,7 @@ func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken st
 			).Do(); err != nil {
 				return err
 			}
-		}
-		else{
+		} else {
 			if _, err := app.bot.ReplyMessage(
 				replyToken,
 				linebot.NewImageMessage(originalContentURL, previewImageURL),
@@ -337,6 +336,7 @@ func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken st
 		return nil
 	})
 }
+
 
 func (app *KitchenSink) handleVideo(message *linebot.VideoMessage, replyToken string) error {
 	return app.handleHeavyContent(message.ID, func(originalContent *os.File) error {
