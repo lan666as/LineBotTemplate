@@ -85,7 +85,7 @@ func NewKitchenSink(channelSecret, channelToken, appBaseURL string) (*KitchenSin
 	}, nil
 }
 
-func getSimsimi(word string) string{
+func GetSimsimi(word string) string{
 	resp, err := http.Get("http://www.simsimi.com/getRealtimeReq?uuid=TZq4ZUZta6MhnHeGYMVBbhMZkNW0r6zgGQalwYMog6X&lc=id&ft=1&reqText=" + url.QueryEscape(word))
 	if err != nil{
 		log.Print(err)
@@ -103,7 +103,7 @@ func getSimsimi(word string) string{
 	}
 	return string(resp2.RespSentence)
 }
-
+func GetIndico()
 // Callback function for http server
 func (app *KitchenSink) Callback(w http.ResponseWriter, r *http.Request) {
 	events, err := app.bot.ParseRequest(r)
@@ -183,7 +183,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			}
 			if _, err := app.bot.ReplyMessage(
 				replyToken,
-				linebot.NewTextMessage("Display name: "+profile.DisplayName),
+				linebot.NewTextMessage("Display name: "+profile.DisplayName + " ID: " + source.UserID),
 				linebot.NewTextMessage("Status message: "+profile.StatusMessage),
 			).Do(); err != nil {
 				return err
@@ -276,7 +276,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 		log.Printf("Echo message to %s: %s", replyToken, message.Text)
 		if _, err := app.bot.ReplyMessage(
 			replyToken,
-			linebot.NewTextMessage(message.ID+":"+message.Text+" -> " + getSimsimi(string(message.Text))),
+			linebot.NewTextMessage(message.ID+":"+message.Text+" -> " + GetSimsimi(string(message.Text))),
 		).Do(); err != nil {
 			return err
 		}
