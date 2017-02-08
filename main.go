@@ -110,7 +110,7 @@ func GetIndico(messageID string, imgUrl string) string{
 	if err != nil {
 		return err
 	}
-	contentEnc := base64.StdEncoding.EncodeToString([]byte(content))
+	contentEnc := b64.StdEncoding.EncodeToString([]byte(content))
 	url := "https://apiv2.indico.io/imagerecognition"
     log.Print("URL:>", url)
 
@@ -328,7 +328,7 @@ func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken st
 			if _, err := app.bot.ReplyMessage(
 				replyToken,
 				linebot.NewImageMessage(originalContentURL, previewImageURL),
-				linebot.NewTextMessage("Analisis: " + GetIndico(string(originalContentURL))),
+				linebot.NewTextMessage("Analisis: " + GetIndico(string(message.ID), string(originalContentURL))),
 				linebot.NewTextMessage(originalContentURL),
 			).Do(); err != nil {
 				return err
