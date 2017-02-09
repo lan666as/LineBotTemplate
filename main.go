@@ -171,7 +171,7 @@ func (app *KitchenSink) GetGoogleImageSearch(messageID string, imgUrl string) st
 			if string(classData) == "_gUb"{
 				return string(z.Text())
 			} else {
-				return string("Error, not _gUb")
+				continue
 			}
 		}
 	}
