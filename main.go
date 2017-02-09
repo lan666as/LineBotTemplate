@@ -25,6 +25,7 @@ import (
 	"path/filepath"
 	"encoding/json"
 	"bytes"
+	"golang.org/x/net/html"
 	b64 "encoding/base64"
 
 	"github.com/line/line-bot-sdk-go/linebot"
@@ -87,7 +88,7 @@ func NewKitchenSink(channelSecret, channelToken, appBaseURL string) (*KitchenSin
 	}, nil
 }
 
-func GetSimsimi(word string) string{
+func (app *KitchenSink) GetSimsimi(word string) string{
 	resp, err := http.Get("http://www.simsimi.com/getRealtimeReq?uuid=TZq4ZUZta6MhnHeGYMVBbhMZkNW0r6zgGQalwYMog6X&lc=id&ft=1&reqText=" + url.QueryEscape(word))
 	if err != nil{
 		log.Print(err)
@@ -105,7 +106,7 @@ func GetSimsimi(word string) string{
 	}
 	return string(resp2.RespSentence)
 }
-func (app *KitchenSink) GetIndico(messageID string, imgUrl string) string{
+func (app *KitchenSink) GetIndico(messageID string) string{
 	content, err := app.bot.GetMessageContent(messageID).Do()
 	if err != nil {
 		log.Print(err)
@@ -135,6 +136,60 @@ func (app *KitchenSink) GetIndico(messageID string, imgUrl string) string{
     body, _ := ioutil.ReadAll(resp.Body)
     log.Print("response Body:", string(body))
     return string(body)
+}
+func (app *KitchenSink) GetGoogleImageSearch(messageID string, imgUrl string) string{
+	resp, err := http.Get("https://images.google.com/searchbyimage?image_url=" + url.QueryEscape(imgUrl) +"&encoded_image=&image_content=&filename=&hl=id")
+	if err != nil{
+		log.Print(err)
+	}
+	b := resp.Body
+	defer b.Close() // close Body when the function returns
+
+	z := html.NewTokenizer(b)
+
+	for {
+		tt := z.Next()
+
+		switch {
+		case tt == html.ErrorToken:
+			// End of the document, we're done
+			return
+		case tt == html.StartTagToken:
+			t := z.Token()
+
+			// Check if the token is an <a> tag
+			isAnchor := t.Data == "a"
+			if !isAnchor {
+				continue
+			}
+
+			// Extract the href value, if there is one
+			ok, classData := confirmClass(t)
+			if !ok {
+				continue
+			}
+			//Confirm class
+			if classData == "_gUb"{
+				return string(z.Text())
+			}
+			else{
+				return string("Error")
+			}
+		}
+	}
+}
+func confirmClass(t html.Token) (ok bool, class string) {
+	// Iterate over all of the Token's attributes until we find an "href"
+	for _, a := range t.Attr {
+		if a.Key == "class" {
+			class = a.Val
+			ok = true
+		}
+	}
+	
+	// "bare" return will return the variables (ok, href) as defined in
+	// the function definition
+	return
 }
 // Callback function for http server
 func (app *KitchenSink) Callback(w http.ResponseWriter, r *http.Request) {
@@ -285,7 +340,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 		).Do(); err != nil {
 			return err
 		}
-	case "bye":
+	/*case "bye":
 		switch source.Type {
 		case linebot.EventSourceTypeUser:
 			return app.replyText(replyToken, "Bot can't leave from 1:1 chat")
@@ -303,12 +358,12 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			if _, err := app.bot.LeaveRoom(source.RoomID).Do(); err != nil {
 				return app.replyText(replyToken, err.Error())
 			}
-		}
+		}*/
 	default:
 		log.Printf("Echo message to %s: %s", replyToken, message.Text)
 		if _, err := app.bot.ReplyMessage(
 			replyToken,
-			linebot.NewTextMessage(message.ID+":"+message.Text+" -> " + GetSimsimi(string(message.Text))),
+			linebot.NewTextMessage(message.Text+" -> " + app.GetSimsimi(string(message.Text))),
 		).Do(); err != nil {
 			return err
 		}
@@ -332,8 +387,8 @@ func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken st
 			if _, err := app.bot.ReplyMessage(
 				replyToken,
 				linebot.NewImageMessage(originalContentURL, previewImageURL),
-				linebot.NewTextMessage("Analisis: " + app.GetIndico(string(message.ID), string(originalContentURL))),
-				linebot.NewTextMessage(originalContentURL),
+				linebot.NewTextMessage("Analisis Indico: " + app.GetIndico(string(message.ID))),
+				linebot.NewTextMessage("Analisis GoogleImageSearch: " + app.GetGoogleImageSearch(string(message.ID), string(originalContentURL))),
 			).Do(); err != nil {
 				return err
 			}
