@@ -25,10 +25,10 @@ import (
 	"path/filepath"
 	"encoding/json"
 	"bytes"
-	"golang.org/x/net/html"
 	b64 "encoding/base64"
 
 	"github.com/line/line-bot-sdk-go/linebot"
+	"code.google.com/p/go.net/html"
 )
 
 func main() {
