@@ -157,16 +157,18 @@ func (app *KitchenSink) GetGoogleImageSearch(messageID string, imgUrl string) st
 			// Check if the token is an <a> tag
 			isAnchor := t.Data == "a"
 			if !isAnchor {
+				continue
 				log.Print("Not anchor:" + t.Data)
 			}
 
 			// Extract the href value, if there is one
 			ok, classData := confirmClass(t)
 			if !ok {
+				continue
 				log.Print("Not OK")
 			}
 			//Confirm class
-			if classData == "_gUb"{
+			if string(classData) == "_gUb"{
 				return string(z.Text())
 			} else {
 				return string("Error, not _gUb")
