@@ -157,19 +157,19 @@ func (app *KitchenSink) GetGoogleImageSearch(messageID string, imgUrl string) st
 			// Check if the token is an <a> tag
 			isAnchor := t.Data == "a"
 			if !isAnchor {
-				continue
+				log.Print("Not anchor:" + t.Data)
 			}
 
 			// Extract the href value, if there is one
 			ok, classData := confirmClass(t)
 			if !ok {
-				continue
+				log.Print("Not OK")
 			}
 			//Confirm class
 			if classData == "_gUb"{
 				return string(z.Text())
 			} else {
-				return string("Error")
+				return string("Error, not _gUb")
 			}
 		}
 	}
@@ -383,7 +383,7 @@ func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken st
 			if _, err := app.bot.ReplyMessage(
 				replyToken,
 				linebot.NewImageMessage(originalContentURL, previewImageURL),
-				linebot.NewTextMessage("Analisis Indico: " + app.GetIndico(string(message.ID))),
+				//linebot.NewTextMessage("Analisis Indico: " + app.GetIndico(string(message.ID))),
 				linebot.NewTextMessage("Analisis GoogleImageSearch: " + app.GetGoogleImageSearch(string(message.ID), string(originalContentURL))),
 			).Do(); err != nil {
 				return err
