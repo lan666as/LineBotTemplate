@@ -151,9 +151,6 @@ func (app *KitchenSink) GetGoogleImageSearch(messageID string, imgUrl string) st
 		tt := z.Next()
 
 		switch {
-		case tt == html.ErrorToken:
-			// End of the document, we're done
-			return
 		case tt == html.StartTagToken:
 			t := z.Token()
 
