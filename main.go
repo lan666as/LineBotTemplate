@@ -25,6 +25,7 @@ import (
 	"path/filepath"
 	"encoding/json"
 	"bytes"
+	"strconv"
 	b64 "encoding/base64"
 
 	"github.com/line/line-bot-sdk-go/linebot"
@@ -359,7 +360,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			}
 		}*/
 	default:
-		if(bool(os.Getenv("SimsimiBool"))){
+		if(strconv.ParseBool(os.Getenv("SimsimiBool"))){
 			log.Printf("Echo message to %s: %s", replyToken, message.Text)
 			if _, err := app.bot.ReplyMessage(
 				replyToken,
