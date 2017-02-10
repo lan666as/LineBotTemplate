@@ -300,10 +300,11 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 		).Do(); err != nil {
 			return err
 		}
+	/*
 	case "!simsimi off":
 			os.Setenv("SimsimiBool", "false")
 	case "!simsimi on":
-			os.Setenv("SimsimiBool", "true")
+			os.Setenv("SimsimiBool", "true")*/
 	case "carousel":
 		imageURL := app.appBaseURL + "/static/buttons/1040.jpg"
 		template := linebot.NewCarouselTemplate(
@@ -359,7 +360,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			}
 		}*/
 	default:
-		if(strconv.ParseBool(os.Getenv("SimsimiBool"))){
+		//if(strconv.ParseBool(os.Getenv("SimsimiBool"))){
 			log.Printf("Echo message to %s: %s", replyToken, message.Text)
 			if _, err := app.bot.ReplyMessage(
 				replyToken,
@@ -367,7 +368,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			).Do(); err != nil {
 				return err
 			}
-		}
+		//}
 	}
 	return nil
 }
