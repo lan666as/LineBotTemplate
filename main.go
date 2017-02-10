@@ -137,58 +137,6 @@ func (app *KitchenSink) GetIndico(messageID string) string{
     log.Print("response Body:", string(body))
     return string(body)
 }
-func (app *KitchenSink) GetGoogleImageSearch(messageID string, imgUrl string) string{
-	resp, err := http.Get("https://images.google.com/searchbyimage?image_url=" + url.QueryEscape(imgUrl) +"&encoded_image=&image_content=&filename=&hl=id")
-	if err != nil{
-		log.Print(err)
-	}
-	b := resp.Body
-	defer b.Close() // close Body when the function returns
-
-	z := html.NewTokenizer(b)
-
-	for {
-		tt := z.Next()
-
-		switch {
-		case tt == html.StartTagToken:
-			t := z.Token()
-
-			// Check if the token is an <a> tag
-			isAnchor := t.Data == "a"
-			if !isAnchor {
-				continue
-				log.Print("Not anchor:" + t.Data)
-			}
-
-			// Extract the href value, if there is one
-			ok, classData := confirmClass(t)
-			if !ok {
-				continue
-				log.Print("Not OK")
-			}
-			//Confirm class
-			if string(classData) == "_gUb"{
-				return string(z.Text())
-			} else {
-				continue
-			}
-		}
-	}
-}
-func confirmClass(t html.Token) (ok bool, class string) {
-	// Iterate over all of the Token's attributes until we find an "href"
-	for _, a := range t.Attr {
-		if a.Key == "class" {
-			class = a.Val
-			ok = true
-		}
-	}
-	
-	// "bare" return will return the variables (ok, href) as defined in
-	// the function definition
-	return
-}
 // Callback function for http server
 func (app *KitchenSink) Callback(w http.ResponseWriter, r *http.Request) {
 	events, err := app.bot.ParseRequest(r)
@@ -270,6 +218,13 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 				replyToken,
 				linebot.NewTextMessage("Display name: "+profile.DisplayName + " ID: " + source.UserID),
 				linebot.NewTextMessage("Status message: "+profile.StatusMessage),
+			).Do(); err != nil {
+				return err
+			}
+		} else if source.GroupID != "" {
+			if _, err := app.bot.ReplyMessage(
+				replyToken,
+				linebot.NewTextMessage("Group ID: " + source.GroupID),
 			).Do(); err != nil {
 				return err
 			}
@@ -385,8 +340,7 @@ func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken st
 			if _, err := app.bot.ReplyMessage(
 				replyToken,
 				linebot.NewImageMessage(originalContentURL, previewImageURL),
-				//linebot.NewTextMessage("Analisis Indico: " + app.GetIndico(string(message.ID))),
-				linebot.NewTextMessage("Analisis GoogleImageSearch: " + app.GetGoogleImageSearch(string(message.ID), string(originalContentURL))),
+				linebot.NewTextMessage("Analisis Indico: " + app.GetIndico(string(message.ID))),
 			).Do(); err != nil {
 				return err
 			}
