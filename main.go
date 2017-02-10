@@ -155,9 +155,9 @@ func (app *KitchenSink) GetImagga(imgUrl string) string{
 	resp_body, _ := ioutil.ReadAll(resp.Body)
 
 	log.Print(resp.Status)
-	return string(resp_body))
+	return string(resp_body)
 }
-func (app *KitchenSink) GetClarifai(imgUrl string) string{
+/*func (app *KitchenSink) GetClarifai(imgUrl string) string{
 	client := &http.Client{}
 	api_key := "acc_d4e658488d09387"
 	api_secret := "7928f55db5b5693d33ee8764824095a6"
@@ -176,9 +176,9 @@ func (app *KitchenSink) GetClarifai(imgUrl string) string{
 	resp_body, _ := ioutil.ReadAll(resp.Body)
 
 	log.Print(resp.Status)
-	return string(resp_body))
+	return string(resp_body)
 }
-
+*/
 // Callback function for http server
 func (app *KitchenSink) Callback(w http.ResponseWriter, r *http.Request) {
 	events, err := app.bot.ParseRequest(r)
@@ -302,10 +302,8 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 		}
 	case "!simsimi off":
 			os.Setenv("SimsimiBool", "false")
-		}
 	case "!simsimi on":
 			os.Setenv("SimsimiBool", "true")
-		}
 	case "carousel":
 		imageURL := app.appBaseURL + "/static/buttons/1040.jpg"
 		template := linebot.NewCarouselTemplate(
