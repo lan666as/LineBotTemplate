@@ -28,7 +28,6 @@ import (
 	b64 "encoding/base64"
 
 	"github.com/line/line-bot-sdk-go/linebot"
-	"golang.org/x/net/html"
 )
 
 func main() {
