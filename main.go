@@ -149,7 +149,6 @@ func (app *KitchenSink) GetImagga(imgUrl string) string{
 
 	if err != nil {
 	log.Print("Error when sending request to the server")
-	return
 	}
 
 	defer resp.Body.Close()
