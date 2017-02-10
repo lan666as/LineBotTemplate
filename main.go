@@ -142,7 +142,7 @@ func (app *KitchenSink) GetImagga(imgUrl string) string{
 	api_key := "acc_d4e658488d09387"
 	api_secret := "7928f55db5b5693d33ee8764824095a6"
 
-	req, _ := http.NewRequest("GET", "https://api.imagga.com/v1/tagging?url="+string(imgUrl), nil)
+	req, _ := http.NewRequest("GET", "https://api.imagga.com/v1/tagging?url="+string(imgUrl)+"&limit=20", nil)
 	req.SetBasicAuth(api_key, api_secret)
 
 	resp, err := client.Do(req)
