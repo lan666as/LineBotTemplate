@@ -25,7 +25,7 @@ import (
 	"path/filepath"
 	"encoding/json"
 	"bytes"
-	"strconv"
+	//"strconv"
 	b64 "encoding/base64"
 
 	"github.com/line/line-bot-sdk-go/linebot"
