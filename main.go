@@ -136,6 +136,49 @@ func (app *KitchenSink) GetIndico(messageID string) string{
     log.Print("response Body:", string(body))
     return string(body)
 }
+func (app *KitchenSink) GetImagga(imgUrl string) string{
+	client := &http.Client{}
+	api_key := "acc_d4e658488d09387"
+	api_secret := "7928f55db5b5693d33ee8764824095a6"
+
+	req, _ := http.NewRequest("GET", "https://api.imagga.com/v1/tagging?url="+string(imgUrl), nil)
+	req.SetBasicAuth(api_key, api_secret)
+
+	resp, err := client.Do(req)
+
+	if err != nil {
+	log.Print("Error when sending request to the server")
+	return
+	}
+
+	defer resp.Body.Close()
+	resp_body, _ := ioutil.ReadAll(resp.Body)
+
+	log.Print(resp.Status)
+	return string(resp_body))
+}
+func (app *KitchenSink) GetClarifai(imgUrl string) string{
+	client := &http.Client{}
+	api_key := "acc_d4e658488d09387"
+	api_secret := "7928f55db5b5693d33ee8764824095a6"
+
+	req, _ := http.NewRequest("GET", "https://api.imagga.com/v1/tagging?url="+string(imgUrl), nil)
+	req.SetBasicAuth(api_key, api_secret)
+
+	resp, err := client.Do(req)
+
+	if err != nil {
+	log.Print("Error when sending request to the server")
+	return
+	}
+
+	defer resp.Body.Close()
+	resp_body, _ := ioutil.ReadAll(resp.Body)
+
+	log.Print(resp.Status)
+	return string(resp_body))
+}
+
 // Callback function for http server
 func (app *KitchenSink) Callback(w http.ResponseWriter, r *http.Request) {
 	events, err := app.bot.ParseRequest(r)
@@ -257,6 +300,12 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 		).Do(); err != nil {
 			return err
 		}
+	case "!simsimi off":
+			os.Setenv("SimsimiBool", "false")
+		}
+	case "!simsimi on":
+			os.Setenv("SimsimiBool", "true")
+		}
 	case "carousel":
 		imageURL := app.appBaseURL + "/static/buttons/1040.jpg"
 		template := linebot.NewCarouselTemplate(
@@ -312,12 +361,14 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			}
 		}*/
 	default:
-		log.Printf("Echo message to %s: %s", replyToken, message.Text)
-		if _, err := app.bot.ReplyMessage(
-			replyToken,
-			linebot.NewTextMessage(message.Text+" -> " + app.GetSimsimi(string(message.Text))),
-		).Do(); err != nil {
-			return err
+		if(bool(os.Getenv("SimsimiBool"))){
+			log.Printf("Echo message to %s: %s", replyToken, message.Text)
+			if _, err := app.bot.ReplyMessage(
+				replyToken,
+				linebot.NewTextMessage(message.Text+" -> " + app.GetSimsimi(string(message.Text))),
+			).Do(); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -340,6 +391,7 @@ func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken st
 				replyToken,
 				linebot.NewImageMessage(originalContentURL, previewImageURL),
 				linebot.NewTextMessage("Analisis #1: " + app.GetIndico(string(message.ID))),
+				linebot.NewTextMessage("Analisis #2: " + app.GetImagga(string(originalContentURL))),
 			).Do(); err != nil {
 				return err
 			}
@@ -448,4 +500,19 @@ func (app *KitchenSink) saveContent(content io.ReadCloser) (*os.File, error) {
 	}
 	log.Printf("Saved %s", file.Name())
 	return file, nil
+}
+func firstWords(value string, count int) string {
+    // Loop over all indexes in the string.
+    for i := range value {
+        // If we encounter a space, reduce the count.
+        if value[i] == ' ' {
+            count -= 1
+            // When no more words required, return a substring.
+            if count == 0 {
+                return value[0:i]
+            }
+        }
+    }
+    // Return the entire string.
+    return value
 }
