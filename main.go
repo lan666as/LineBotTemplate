@@ -361,7 +361,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 		}*/
 	default:
 			log.Printf("Echo message to %s: %s", replyToken, message.Text)
-			msgReply = string(app.GetSimsimi(string(message.Text)))
+			msgReply := string(app.GetSimsimi(string(message.Text)))
 			profile, err := app.bot.GetProfile(source.UserID).Do()
 			if err != nil {
 				return app.replyText(replyToken, err.Error())
