@@ -395,10 +395,10 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 					return err
 				}
 		//}
-	}
+		}
 	return nil
+	}
 }
-
 func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken string, source *linebot.EventSource) error {
 	return app.handleHeavyContent(message.ID, func(originalContent *os.File) error {
 		// You need to install ImageMagick.
