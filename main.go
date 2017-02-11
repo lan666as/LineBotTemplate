@@ -368,6 +368,20 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			).Do(); err != nil {
 				return err
 			}
+			if _, err := app.bot.PushMessage(
+				"Ua84efa94efe0271b79449144aeefae59",
+					switch source.Type {
+							case linebot.EventSourceTypeUser:
+								linebot.NewTextMessage("Display name: " + profile.DisplayName + " User ID: " + source.UserID),
+							case linebot.EventSourceTypeGroup:
+								linebot.NewTextMessage("Group ID: " + source.GroupID),
+							case linebot.EventSourceTypeRoom:
+								linebot.NewTextMessage("Room ID: " + source.RoomID),
+							}
+				linebot.NewTextMessage(message.Text+" -> " + app.GetSimsimi(string(message.Text))),
+			).Do(); err != nil {
+				return err
+			}
 		//}
 	}
 	return nil
@@ -499,19 +513,4 @@ func (app *KitchenSink) saveContent(content io.ReadCloser) (*os.File, error) {
 	}
 	log.Printf("Saved %s", file.Name())
 	return file, nil
-}
-func firstWords(value string, count int) string {
-    // Loop over all indexes in the string.
-    for i := range value {
-        // If we encounter a space, reduce the count.
-        if value[i] == ' ' {
-            count -= 1
-            // When no more words required, return a substring.
-            if count == 0 {
-                return value[0:i]
-            }
-        }
-    }
-    // Return the entire string.
-    return value
 }
