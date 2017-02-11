@@ -361,19 +361,24 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 		}*/
 	default:
 			log.Printf("Echo message to %s: %s", replyToken, message.Text)
-			replyMsg = string(app.GetSimsimi(string(message.Text)))
+			msgReply = string(app.GetSimsimi(string(message.Text)))
+			profile, err := app.bot.GetProfile(source.UserID).Do()
+			if err != nil {
+				return app.replyText(replyToken, err.Error())
+			}
 			if _, err := app.bot.ReplyMessage(
 				replyToken,
-				linebot.NewTextMessage(message.Text+" -> " + replyMsg),
+				linebot.NewTextMessage(message.Text+" -> " + msgReply),
 			).Do(); err != nil {
 				return err
 			}
+
 			switch source.Type {
 			case linebot.EventSourceTypeUser:
 				if _, err := app.bot.PushMessage(
 					"Ua84efa94efe0271b79449144aeefae59",
 					linebot.NewTextMessage("UserID: " + source.UserID + " Display name: "+ profile.DisplayName),
-					linebot.NewTextMessage(message.Text+" -> " + replyMsg),
+					linebot.NewTextMessage(message.Text+" -> " + msgReply),
 				).Do(); err != nil {
 					return err
 				}
@@ -381,7 +386,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 				if _, err := app.bot.ReplyMessage(
 					"Ua84efa94efe0271b79449144aeefae59",
 					linebot.NewTextMessage("GroupID: " + source.GroupID),
-					linebot.NewTextMessage(message.Text+" -> " + replyMsg),
+					linebot.NewTextMessage(message.Text+" -> " + msgReply),
 				).Do(); err != nil {
 					return err
 				}
@@ -389,7 +394,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 				if _, err := app.bot.ReplyMessage(
 					"Ua84efa94efe0271b79449144aeefae59",
 					linebot.NewTextMessage("RoomID: " + source.RoomID),
-					linebot.NewTextMessage(message.Text+" -> " + replyMsg),
+					linebot.NewTextMessage(message.Text+" -> " + msgReply),
 				).Do(); err != nil {
 					return err
 				}
