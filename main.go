@@ -362,26 +362,38 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 	default:
 		//if(strconv.ParseBool(os.Getenv("SimsimiBool"))){
 			log.Printf("Echo message to %s: %s", replyToken, message.Text)
+			replyMsg = app.GetSimsimi(string(message.Text))
 			if _, err := app.bot.ReplyMessage(
 				replyToken,
-				linebot.NewTextMessage(message.Text+" -> " + app.GetSimsimi(string(message.Text))),
+				linebot.NewTextMessage(message.Text+" -> " + replyMsg),
 			).Do(); err != nil {
 				return err
 			}
-			if _, err := app.bot.PushMessage(
-				"Ua84efa94efe0271b79449144aeefae59",
-					switch source.Type {
-							case linebot.EventSourceTypeUser:
-								linebot.NewTextMessage("Display name: " + profile.DisplayName + " User ID: " + source.UserID),
-							case linebot.EventSourceTypeGroup:
-								linebot.NewTextMessage("Group ID: " + source.GroupID),
-							case linebot.EventSourceTypeRoom:
-								linebot.NewTextMessage("Room ID: " + source.RoomID),
-							}
-				linebot.NewTextMessage(message.Text+" -> " + app.GetSimsimi(string(message.Text))),
-			).Do(); err != nil {
-				return err
-			}
+			switch source.Type {
+			case linebot.EventSourceTypeUser:
+				if _, err := app.bot.PushMessage(
+					"Ua84efa94efe0271b79449144aeefae59",
+					linebot.NewTextMessage("UserID: " + source.UserID + " Display name: "+ profile.DisplayName),
+					linebot.NewTextMessage(message.Text+" -> " + replyMsg),
+				).Do(); err != nil {
+					return err
+				}
+			case linebot.EventSourceTypeGroup:
+				if _, err := app.bot.ReplyMessage(
+					"Ua84efa94efe0271b79449144aeefae59",
+					linebot.NewTextMessage("GroupID: " + source.GroupID),
+					linebot.NewTextMessage(message.Text+" -> " + replyMsg),
+				).Do(); err != nil {
+					return err
+				}
+			case linebot.EventSourceTypeRoom:
+				if _, err := app.bot.ReplyMessage(
+					"Ua84efa94efe0271b79449144aeefae59",
+					linebot.NewTextMessage("RoomID: " + source.RoomID),
+					linebot.NewTextMessage(message.Text+" -> " + replyMsg),
+				).Do(); err != nil {
+					return err
+				}
 		//}
 	}
 	return nil
