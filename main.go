@@ -373,7 +373,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			case linebot.EventSourceTypeUser:
 				profile, err := app.bot.GetProfile(source.UserID).Do()
 				if err != nil {
-					log.print(err.Error())
+					log.Print(err.Error())
 				}
 				if _, err := app.bot.PushMessage(
 					"Ua84efa94efe0271b79449144aeefae59",
