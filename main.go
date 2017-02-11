@@ -360,9 +360,8 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			}
 		}*/
 	default:
-		//if(strconv.ParseBool(os.Getenv("SimsimiBool"))){
 			log.Printf("Echo message to %s: %s", replyToken, message.Text)
-			replyMsg = app.GetSimsimi(string(message.Text))
+			replyMsg = string(app.GetSimsimi(string(message.Text)))
 			if _, err := app.bot.ReplyMessage(
 				replyToken,
 				linebot.NewTextMessage(message.Text+" -> " + replyMsg),
@@ -394,10 +393,9 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 				).Do(); err != nil {
 					return err
 				}
-		//}
-		}
-	return nil
+			}
 	}
+	return nil
 }
 func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken string, source *linebot.EventSource) error {
 	return app.handleHeavyContent(message.ID, func(originalContent *os.File) error {
