@@ -16,7 +16,7 @@ package main
 
 import (
 	"io"
-	"time"
+	//"time"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -64,7 +64,7 @@ type KitchenSink struct {
 	bot         *linebot.Client
 	appBaseURL  string
 	downloadDir string
-	db 			*DB
+	db 			*sql.DB
 }
 type chat_bool struct {
     ID    string
