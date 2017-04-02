@@ -602,7 +602,7 @@ func rowExists(query string, args ...interface{}) bool {
     query = fmt.Sprintf("SELECT exists (%s)", query)
     err := app.db.QueryRow(query, args...).Scan(&exists)
     if err != nil && err != sql.ErrNoRows {
-            glog.Fatalf("error checking if row exists '%s' %v", args, err)
+            log.Printf("error checking if row exists '%s' %v", args, err)
     }
     return exists
 }
