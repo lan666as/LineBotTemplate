@@ -31,7 +31,7 @@ import (
 	b64 "encoding/base64"
 
 	"github.com/line/line-bot-sdk-go/linebot"
-	pq "github.com/lib/pq"
+	"github.com/lib/pq"
 )
 
 func main() {
