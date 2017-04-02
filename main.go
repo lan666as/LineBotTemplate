@@ -405,8 +405,6 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 }
 func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken string, source *linebot.EventSource) error {
 	return app.handleHeavyContent(message.ID, func(originalContent *os.File) error {
-		// You need to install ImageMagick.
-		// And you should consider about security and scalability.
 		previewImagePath := originalContent.Name() + "-preview"
 		_, err := exec.Command("convert", "-resize", "240x", "jpeg:"+originalContent.Name(), "jpeg:"+previewImagePath).Output()
 		if err != nil {
@@ -415,7 +413,10 @@ func (app *KitchenSink) handleImage(message *linebot.ImageMessage, replyToken st
 
 		originalContentURL := app.appBaseURL + "/downloaded/" + filepath.Base(originalContent.Name())
 		previewImageURL := app.appBaseURL + "/downloaded/" + filepath.Base(previewImagePath)
-		if((source.UserID == "U54182c7c0ee792ac90a24f95282dd048" && source.Type == linebot.EventSourceTypeUser) || (source.GroupID == "Ca560c9c5db15fcd611a9329b1d1b4713" && source.Type == linebot.EventSourceTypeGroup)) {
+		if((source.UserID == "U54182c7c0ee792ac90a24f95282dd048" && source.Type == linebot.EventSourceTypeUser) || 
+			(source.GroupID == "Ca560c9c5db15fcd611a9329b1d1b4713" && source.Type == linebot.EventSourceTypeGroup) ||
+			(source.GroupID == "Cd586279ce87ccf5cb53b269c9b194bdc" && source.Type == linebot.EventSourceTypeGroup)
+			) {
 			if _, err := app.bot.ReplyMessage(
 				replyToken,
 				linebot.NewImageMessage(originalContentURL, previewImageURL),
