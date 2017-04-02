@@ -270,11 +270,11 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 	var SourceID string
 	switch source.Type {
 		case linebot.EventSourceTypeUser:
-			SourceID := source.UserID
+			SourceID = source.UserID
 		case linebot.EventSourceTypeGroup:
-			SourceID := source.GroupID
+			SourceID = source.GroupID
 		case linebot.EventSourceTypeRoom:
-			SourceID := source.RoomID
+			SourceID = source.RoomID
 	}
 	switch message.Text {
 	case "profile":
