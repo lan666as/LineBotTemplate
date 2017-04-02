@@ -328,25 +328,25 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			return err
 		}
 	case "!simsimi off":
-		if (app.rowExists("SELECT 1 FROM public.chat_bool WHERE ID LIKE '?'", SourceID)){
-    		if _, err := app.db.Exec("update public.chat_bool set Bool = false where ID like '?'", SourceID);
+		if (app.rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '?'", SourceID)){
+    		if _, err := app.db.Exec("update public.chat_bool set bool = false where id like '"+SourceID+"'");
     		err != nil {
         		log.Print(err.Error())
     		}
     	} else {
-    		if _, err := app.db.Exec("insert into public.chat_bool values ('?', 'false')", SourceID);
+    		if _, err := app.db.Exec("insert into public.chat_bool values ('"+SourceID+"', 'false')");
 				err != nil {
 				    log.Print(err.Error())
 			}
     	}
 	case "!simsimi on":
-		if (app.rowExists("SELECT 1 FROM public.chat_bool WHERE ID LIKE '?'", SourceID)){
-    		if _, err := app.db.Exec("update public.chat_bool set Bool = true where ID like '?'", SourceID);
+		if (app.rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '?'", SourceID)){
+    		if _, err := app.db.Exec("update public.chat_bool set bool = true where id like '"+SourceID+"'");
     		err != nil {
         		log.Print(err.Error())
     		}
     	} else {
-    		if _, err := app.db.Exec("insert into public.chat_bool values ('?', 'true')", SourceID);
+    		if _, err := app.db.Exec("insert into public.chat_bool ('"+SourceID+"', 'true')");
 				err != nil {
 				    log.Print(err.Error())
 			}
@@ -407,9 +407,9 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 		}
 	default:
 				msgReply := string(app.GetSimsimi(string(message.Text)))
-				if (app.rowExists("SELECT 1 FROM public.chat_bool WHERE ID LIKE '?'", SourceID)) {
+				if (app.rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '"+SourceID+"'")) {
 					var result = chat_bool{}
-					var err = app.db.QueryRow("select Bool from public.chat_bool where ID like '?'", SourceID).Scan(&result.bool)
+					var err = app.db.QueryRow("select Bool from public.chat_bool where id like '"+SourceID+"'").Scan(&result.bool)
 				    if err != nil {
 				        log.Print(err.Error())
 				        os.Exit(0)
@@ -424,7 +424,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 						}
 					}
 				} else {
-					if _, err := app.db.Exec("insert into public.chat_bool values ('?', 'true')", SourceID);
+					if _, err := app.db.Exec("insert into public.chat_bool values ('"+SourceID+"', 'true')");
 				    err != nil {
 				        log.Print(err.Error())
 				    }
