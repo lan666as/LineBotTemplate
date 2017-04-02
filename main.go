@@ -328,7 +328,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			return err
 		}
 	case "!simsimi off":
-		if (app.rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '?'", SourceID)){
+		if (app.db.Exec("SELECT EXISTS(SELECT 1 FROM test WHERE text LIKE '"+SourceID+"'LIMIT 1")){
     		if _, err := app.db.Exec("update public.chat_bool set bool = false where id like '"+SourceID+"'");
     		err != nil {
         		log.Print(err.Error())
@@ -340,7 +340,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			}
     	}
 	case "!simsimi on":
-		if (app.rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '?'", SourceID)){
+		if (app.db.Exec("SELECT EXISTS(SELECT 1 FROM test WHERE text LIKE '"+SourceID+"'LIMIT 1")){
     		if _, err := app.db.Exec("update public.chat_bool set bool = true where id like '"+SourceID+"'");
     		err != nil {
         		log.Print(err.Error())
@@ -596,13 +596,4 @@ func (app *KitchenSink) saveContent(content io.ReadCloser) (*os.File, error) {
 	}
 	log.Printf("Saved %s", file.Name())
 	return file, nil
-}
-func (app *KitchenSink) rowExists(query string, args ...interface{}) bool {
-    var exists bool
-    query = fmt.Sprintf("SELECT exists (%s)", query)
-    err := app.db.QueryRow(query, args...).Scan(&exists)
-    if err != nil && err != sql.ErrNoRows {
-            log.Printf("error checking if row exists '%s' %v", args, err)
-    }
-    return exists
 }
