@@ -328,7 +328,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			return err
 		}
 	case "!simsimi off":
-		if rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '$1'", SourceID){
+		if app.rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '$1'", SourceID){
     		if _, err := app.db.Exec("update public.chat_bool set bool = false where id like '"+SourceID+"'");
     		err != nil {
         		log.Print(err.Error())
@@ -340,7 +340,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			}
     	}
 	case "!simsimi on":
-		if rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '$1'", SourceID){
+		if app.rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '$1'", SourceID){
     		if _, err := app.db.Exec("update public.chat_bool set bool = true where id like '"+SourceID+"'");
     		err != nil {
         		log.Print(err.Error())
@@ -407,7 +407,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 		}
 	default:
 				msgReply := string(app.GetSimsimi(string(message.Text)))
-				if rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '$1'", SourceID){
+				if app.rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '$1'", SourceID){
 					var result = chat_bool{}
 					var err = app.db.QueryRow("select Bool from public.chat_bool where id like '"+SourceID+"'").Scan(&result.bool)
 				    if err != nil {
