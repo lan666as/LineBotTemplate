@@ -328,12 +328,12 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			return err
 		}
 	case "!simsimi off":
-    	if _, err := app.db.Exec("update public.chat_bool set bool = ? where ID like '?'", false, SourceID);
+    	if _, err := app.db.Exec("update public.chat_bool set Bool = ? where ID like '?'", false, SourceID);
     	err != nil {
         	log.Print(err.Error())
     	}
 	case "!simsimi on":
-    	if _, err := app.db.Exec("update public.chat_bool set bool = ? where ID like '?'", true, SourceID);
+    	if _, err := app.db.Exec("update public.chat_bool set Bool = ? where ID like '?'", true, SourceID);
     	err != nil {
         	log.Print(err.Error())
     	}
@@ -395,7 +395,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 				msgReply := string(app.GetSimsimi(string(message.Text)))
 				if (app.rowExists("SELECT 1 FROM public.chat_bool WHERE ID LIKE '?'", SourceID)) {
 					var result = chat_bool{}
-					var err = app.db.QueryRow("select bool from public.chat_bool where ID like '?'", SourceID).Scan(&result.bool)
+					var err = app.db.QueryRow("select Bool from public.chat_bool where ID like '?'", SourceID).Scan(&result.bool)
 				    if err != nil {
 				        log.Print(err.Error())
 				        os.Exit(0)
