@@ -407,7 +407,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 		}
 	default:
 				msgReply := string(app.GetSimsimi(string(message.Text)))
-				if (app.rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '"+SourceID+"'")) {
+				if (app.rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '?'", SourceID)) {
 					var result = chat_bool{}
 					var err = app.db.QueryRow("select Bool from public.chat_bool where id like '"+SourceID+"'").Scan(&result.bool)
 				    if err != nil {
