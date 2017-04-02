@@ -597,7 +597,7 @@ func (app *KitchenSink) saveContent(content io.ReadCloser) (*os.File, error) {
 	log.Printf("Saved %s", file.Name())
 	return file, nil
 }
-func rowExists(query string, args ...interface{}) bool {
+func (app *KitchenSink) rowExists(query string, args ...interface{}) bool {
     var exists bool
     query = fmt.Sprintf("SELECT exists (%s)", query)
     err := app.db.QueryRow(query, args...).Scan(&exists)
