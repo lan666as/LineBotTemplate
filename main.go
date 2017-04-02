@@ -31,7 +31,7 @@ import (
 	b64 "encoding/base64"
 
 	"github.com/line/line-bot-sdk-go/linebot"
-	"github.com/lib/pq"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -326,12 +326,12 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			return err
 		}
 	case "!simsimi off":
-    	if _, err = app.db.Exec("update public.chat_bool set bool = ? where ID like '?'", false, SourceID);
+    	if _, err := app.db.Exec("update public.chat_bool set bool = ? where ID like '?'", false, SourceID);
     	err != nil {
         	Log.print(err.Error())
     	}
 	case "!simsimi on":
-    	if _, err = app.db.Exec("update public.chat_bool set bool = ? where ID like '?'", true, SourceID);
+    	if _, err := app.db.Exec("update public.chat_bool set bool = ? where ID like '?'", true, SourceID);
     	err != nil {
         	Log.print(err.Error())
     	}
@@ -390,11 +390,11 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			}
 		}
 	default:
-				if (rowExists("SELECT 1 FROM public.chat_bool WHERE ID LIKE '?'", SourceID)){
+				if (rowExists("SELECT 1 FROM public.chat_bool WHERE ID LIKE '?'", SourceID)) {
 					var result = chat_bool{}
 					var err = app.db.QueryRow("select bool from public.chat_bool where ID like '?'", SourceID).Scan(&result.bool)
 				    if err != nil {
-				        log.print(err.Error())
+				        log.Print(err.Error())
 				        os.Exit(0)
 				    }
 				    if(result.bool){
@@ -407,11 +407,10 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 							return err
 						}
 					}
-				}
-				else{
-					if _, err = app.db.Exec("insert into public.chat_bool values (?, ?)", SourceID, true);
+				} else {
+					if _, err := app.db.Exec("insert into public.chat_bool values (?, ?)", SourceID, true);
 				    err != nil {
-				        log.print(err.Error())
+				        log.Print(err.Error())
 				    }
 					log.Printf("Echo message to %s: %s", replyToken, message.Text)
 					msgReply := string(app.GetSimsimi(string(message.Text)))
