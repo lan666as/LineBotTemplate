@@ -328,14 +328,28 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			return err
 		}
 	case "!simsimi off":
-    	if _, err := app.db.Exec("update public.chat_bool set Bool = false where ID like '?'", SourceID);
-    	err != nil {
-        	log.Print(err.Error())
+		if (app.rowExists("SELECT 1 FROM public.chat_bool WHERE ID LIKE '?'", SourceID)){
+    		if _, err := app.db.Exec("update public.chat_bool set Bool = false where ID like '?'", SourceID);
+    		err != nil {
+        		log.Print(err.Error())
+    		}
+    	} else {
+    		if _, err := app.db.Exec("insert into public.chat_bool values ('?', 'false')", SourceID);
+				err != nil {
+				    log.Print(err.Error())
+			}
     	}
 	case "!simsimi on":
-    	if _, err := app.db.Exec("update public.chat_bool set Bool = true where ID like '?'",SourceID);
-    	err != nil {
-        	log.Print(err.Error())
+		if (app.rowExists("SELECT 1 FROM public.chat_bool WHERE ID LIKE '?'", SourceID)){
+    		if _, err := app.db.Exec("update public.chat_bool set Bool = true where ID like '?'", SourceID);
+    		err != nil {
+        		log.Print(err.Error())
+    		}
+    	} else {
+    		if _, err := app.db.Exec("insert into public.chat_bool values ('?', 'true')", SourceID);
+				err != nil {
+				    log.Print(err.Error())
+			}
     	}
 	case "carousel":
 		imageURL := app.appBaseURL + "/static/buttons/1040.jpg"
@@ -410,7 +424,7 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 						}
 					}
 				} else {
-					if _, err := app.db.Exec("insert into public.chat_bool values (?, true)", SourceID);
+					if _, err := app.db.Exec("insert into public.chat_bool values ('?', 'true')", SourceID);
 				    err != nil {
 				        log.Print(err.Error())
 				    }
