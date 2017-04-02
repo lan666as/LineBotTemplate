@@ -328,29 +328,15 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			return err
 		}
 	case "!simsimi off":
-		if app.rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '$1'", SourceID){
-    		if _, err := app.db.Exec("update public.chat_bool set bool = false where id like '"+SourceID+"'");
-    		err != nil {
-        		log.Print(err.Error())
-    		}
-    	} else {
-    		if _, err := app.db.Exec("insert into public.chat_bool values ('"+SourceID+"', 'false')");
-				err != nil {
-				    log.Print(err.Error())
-			}
-    	}
+    	if _, err := app.db.Exec("INSERT INTO public.chat_bool (id, bool) VALUES ('"+SourceID+"', false) ON DUPLICATE KEY UPDATE bool = VALUES('false'");
+			err != nil {
+			    log.Print(err.Error())
+		}
 	case "!simsimi on":
-		if app.rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '$1'", SourceID){
-    		if _, err := app.db.Exec("update public.chat_bool set bool = true where id like '"+SourceID+"'");
-    		err != nil {
-        		log.Print(err.Error())
-    		}
-    	} else {
-    		if _, err := app.db.Exec("insert into public.chat_bool ('"+SourceID+"', 'true')");
-				err != nil {
-				    log.Print(err.Error())
-			}
-    	}
+    	if _, err := app.db.Exec("INSERT INTO public.chat_bool (id, bool) VALUES ('"+SourceID+"', true) ON DUPLICATE KEY UPDATE bool = VALUES('true'");
+			err != nil {
+			    log.Print(err.Error())
+		}
 	case "carousel":
 		imageURL := app.appBaseURL + "/static/buttons/1040.jpg"
 		template := linebot.NewCarouselTemplate(
@@ -407,7 +393,12 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 		}
 	default:
 				msgReply := string(app.GetSimsimi(string(message.Text)))
-				if app.rowExists("SELECT 1 FROM public.chat_bool WHERE id LIKE '$1'", SourceID){
+				if app.rowExists("SELECT id FROM public.chat_bool WHERE id LIKE '$1'", SourceID){
+					if _, err := app.db.Exec("INSERT INTO public.chat_bool (id, bool) VALUES ('"+SourceID+"', false)");
+					err != nil {
+					    log.Print(err.Error())
+					}
+				}
 					var result = chat_bool{}
 					var err = app.db.QueryRow("select Bool from public.chat_bool where id like '"+SourceID+"'").Scan(&result.bool)
 				    if err != nil {
@@ -423,19 +414,6 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 							return err
 						}
 					}
-				} else {
-					if _, err := app.db.Exec("insert into public.chat_bool values ('"+SourceID+"', 'true')");
-				    err != nil {
-				        log.Print(err.Error())
-				    }
-					log.Printf("Echo message to %s: %s", replyToken, message.Text)
-					if _, err := app.bot.ReplyMessage(
-						replyToken,
-						linebot.NewTextMessage(message.Text+" -> " + msgReply),
-					).Do(); err != nil {
-						return err
-					}
-				}
 				switch source.Type {
 				case linebot.EventSourceTypeUser:
 					profile, err := app.bot.GetProfile(source.UserID).Do()
