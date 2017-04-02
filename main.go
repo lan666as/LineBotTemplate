@@ -328,8 +328,8 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			return err
 		}
 	case "!simsimi off":
-		query := "SELECT EXISTS(SELECT 1 FROM public.chat_bool WHERE id LIKE '"+SourceID+"'LIMIT 1"
-		if (app.db.Exec(query)){
+		query := "SELECT EXISTS(SELECT 1 FROM public.chat_bool WHERE id LIKE '?' LIMIT 1"
+		if (app.db.Exec(query, SourceID)){
     		if _, err := app.db.Exec("update public.chat_bool set bool = false where id like '"+SourceID+"'");
     		err != nil {
         		log.Print(err.Error())
@@ -341,8 +341,8 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			}
     	}
 	case "!simsimi on":
-		query := "SELECT EXISTS(SELECT 1 FROM public.chat_bool WHERE id LIKE '"+SourceID+"'LIMIT 1"
-		if (app.db.Exec(query)){
+		query := "SELECT EXISTS(SELECT 1 FROM public.chat_bool WHERE id LIKE '?' LIMIT 1"
+		if (app.db.Exec(query, SourceID)){
     		if _, err := app.db.Exec("update public.chat_bool set bool = true where id like '"+SourceID+"'");
     		err != nil {
         		log.Print(err.Error())
@@ -409,8 +409,8 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 		}
 	default:
 				msgReply := string(app.GetSimsimi(string(message.Text)))
-				query := "SELECT EXISTS(SELECT 1 FROM public.chat_bool WHERE id LIKE '"+SourceID+"'LIMIT 1"
-				if (app.db.Exec(query)){
+				query := "SELECT EXISTS(SELECT 1 FROM public.chat_bool WHERE id LIKE '?' LIMIT 1"
+				if (app.db.Exec(query, SourceID)){
 					var result = chat_bool{}
 					var err = app.db.QueryRow("select Bool from public.chat_bool where id like '"+SourceID+"'").Scan(&result.bool)
 				    if err != nil {
