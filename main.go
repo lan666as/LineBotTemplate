@@ -266,7 +266,7 @@ func (app *KitchenSink) Callback(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken string, source *linebot.EventSource) error {
-	var SourceID
+	var SourceID string
 	switch source.Type {
 		case linebot.EventSourceTypeUser:
 			SourceID := source.UserID
