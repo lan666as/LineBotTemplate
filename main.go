@@ -266,16 +266,8 @@ func (app *KitchenSink) Callback(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+
 func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken string, source *linebot.EventSource) error {
-	var SourceID string
-	switch source.Type {
-		case linebot.EventSourceTypeUser:
-			SourceID = source.UserID
-		case linebot.EventSourceTypeGroup:
-			SourceID = source.GroupID
-		case linebot.EventSourceTypeRoom:
-			SourceID = source.RoomID
-	}
 	switch message.Text {
 	case "profile":
 		if source.UserID != "" {
@@ -285,15 +277,8 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			}
 			if _, err := app.bot.ReplyMessage(
 				replyToken,
-				linebot.NewTextMessage("Display name: "+profile.DisplayName + " ID: " + source.UserID),
+				linebot.NewTextMessage("Display name: "+profile.DisplayName),
 				linebot.NewTextMessage("Status message: "+profile.StatusMessage),
-			).Do(); err != nil {
-				return err
-			}
-		} else if source.GroupID != "" {
-			if _, err := app.bot.ReplyMessage(
-				replyToken,
-				linebot.NewTextMessage("Group ID: " + source.GroupID),
 			).Do(); err != nil {
 				return err
 			}
@@ -306,8 +291,8 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			imageURL, "My button sample", "Hello, my button",
 			linebot.NewURITemplateAction("Go to line.me", "https://line.me"),
 			linebot.NewPostbackTemplateAction("Say hello1", "hello こんにちは", ""),
-			linebot.NewPostbackTemplateAction("Autoaddfriends", "hello こんにちは", "Aku suka Hafiz lho!"),
-			linebot.NewMessageTemplateAction("Autolikes", "Aku suka Hafiz lho!"),
+			linebot.NewPostbackTemplateAction("言 hello2", "hello こんにちは", "hello こんにちは"),
+			linebot.NewMessageTemplateAction("Say message", "Rice=米"),
 		)
 		if _, err := app.bot.ReplyMessage(
 			replyToken,
@@ -326,16 +311,6 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			linebot.NewTemplateMessage("Confirm alt text", template),
 		).Do(); err != nil {
 			return err
-		}
-	case "!simsimi off":
-    	if _, err := app.db.Exec("INSERT INTO public.chat_bool (id, bool) VALUES ('"+SourceID+"', false) ON DUPLICATE KEY UPDATE bool = VALUES('false'");
-			err != nil {
-			    log.Print(err.Error())
-		}
-	case "!simsimi on":
-    	if _, err := app.db.Exec("INSERT INTO public.chat_bool (id, bool) VALUES ('"+SourceID+"', true) ON DUPLICATE KEY UPDATE bool = VALUES('true'");
-			err != nil {
-			    log.Print(err.Error())
 		}
 	case "carousel":
 		imageURL := app.appBaseURL + "/static/buttons/1040.jpg"
@@ -392,59 +367,13 @@ func (app *KitchenSink) handleText(message *linebot.TextMessage, replyToken stri
 			}
 		}
 	default:
-				msgReply := string(app.GetSimsimi(string(message.Text)))
-				if app.rowExists("SELECT id FROM public.chat_bool WHERE id LIKE '$1'", SourceID){
-					if _, err := app.db.Exec("INSERT INTO public.chat_bool (id, bool) VALUES ('"+SourceID+"', false)");
-					err != nil {
-					    log.Print(err.Error())
-					}
-				}
-					var result = chat_bool{}
-					var err = app.db.QueryRow("select Bool from public.chat_bool where id like '"+SourceID+"'").Scan(&result.bool)
-				    if err != nil {
-				        log.Print(err.Error())
-				        os.Exit(0)
-				    }
-				    if(result.bool){
-						log.Printf("Echo message to %s: %s", replyToken, message.Text)
-						if _, err := app.bot.ReplyMessage(
-							replyToken,
-							linebot.NewTextMessage(message.Text+" -> " + msgReply),
-						).Do(); err != nil {
-							return err
-						}
-					}
-				switch source.Type {
-				case linebot.EventSourceTypeUser:
-					profile, err := app.bot.GetProfile(source.UserID).Do()
-					if err != nil {
-						log.Print(err.Error())
-					}
-					if _, err := app.bot.PushMessage(
-						"Ua84efa94efe0271b79449144aeefae59",
-						linebot.NewTextMessage("UserID: " + source.UserID),
-						linebot.NewTextMessage("Display name: "+ profile.DisplayName),
-						linebot.NewTextMessage(message.Text+" -> " + msgReply),
-					).Do(); err != nil {
-						return err
-					}
-				case linebot.EventSourceTypeGroup:
-					if _, err := app.bot.PushMessage(
-						"Ua84efa94efe0271b79449144aeefae59",
-						linebot.NewTextMessage("GroupID: " + source.GroupID),
-						linebot.NewTextMessage(message.Text+" -> " + msgReply),
-					).Do(); err != nil {
-						return err
-					}
-				case linebot.EventSourceTypeRoom:
-					if _, err := app.bot.PushMessage(
-						"Ua84efa94efe0271b79449144aeefae59",
-						linebot.NewTextMessage("RoomID: " + source.RoomID),
-						linebot.NewTextMessage(message.Text+" -> " + msgReply),
-					).Do(); err != nil {
-						return err
-					}
-				}
+		log.Printf("Echo message to %s: %s", replyToken, message.Text)
+		if _, err := app.bot.ReplyMessage(
+			replyToken,
+			linebot.NewTextMessage(message.Text),
+		).Do(); err != nil {
+			return err
+		}
 	}
 	return nil
 }
