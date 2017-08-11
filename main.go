@@ -124,7 +124,7 @@ func (app *KitchenSink) GetSimsimi(word string) string{
 	}
 	return string(resp2.RespSentence)
 }
-func (app *KitchenSink) GetIndico(messageID string) string{
+/*func (app *KitchenSink) GetIndico(messageID string) string{
 	content, err := app.bot.GetMessageContent(messageID).Do()
 	if err != nil {
 		log.Print(err)
@@ -174,7 +174,7 @@ func (app *KitchenSink) GetImagga(imgUrl string) string{
 
 	log.Print(resp.Status)
 	return string(resp_body)
-}
+}*/
 /*func (app *KitchenSink) GetClarifai(imgUrl string) string{
 	client := &http.Client{}
 	api_key := "acc_d4e658488d09387"
